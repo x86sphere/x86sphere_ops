@@ -58,9 +58,13 @@
 # 2. 一键启动 (自动执行 DB -> Redis -> Backend -> Frontend 启动序列)
 docker-compose up -d
 
+普通用户登录/AD没有配置，配置好了就可以登录
+- **账户**: admin
+- **密码**: Admin123#
+
 # 3. 验证
 # 访问 http://服务器IP:80 (前端)
-# 访问 http://服务器IP:8080/api/v1/healthz (后端状态)
+# 访问 http://服务器IP:8083/api/v1/healthz (后端状态)
 ```
 
 ---
@@ -75,3 +79,18 @@ docker-compose up -d
 
 ## 📄 版权信息
 © 2026 **X86sphereOps 自动化运维平台**. 版权所有。
+
+## 截图
+<img width="1746" height="1275" alt="image" src="https://github.com/user-attachments/assets/cbdf2179-ebf8-4d1e-994e-8336d4fc56ba" />
+<img width="1748" height="1275" alt="image" src="https://github.com/user-attachments/assets/ed3608a6-372f-4205-8088-b1197937fcd0" />
+<img width="1746" height="1271" alt="image" src="https://github.com/user-attachments/assets/762214eb-baff-40d9-855b-e738c418f785" />
+<img width="1750" height="1264" alt="image" src="https://github.com/user-attachments/assets/fd78078f-50cc-4fa8-a576-75ecf7324b45" />
+<img width="1743" height="1277" alt="image" src="https://github.com/user-attachments/assets/53be096e-dbe5-4f5f-975a-847049bf8362" />
+<img width="1742" height="1282" alt="image" src="https://github.com/user-attachments/assets/7a9b905b-fe24-464b-aca5-dfa79448dfdf" />
+<img width="1740" height="1275" alt="image" src="https://github.com/user-attachments/assets/c0204906-f283-4745-ae17-2cd6c841a5d5" />
+<img width="1752" height="1272" alt="image" src="https://github.com/user-attachments/assets/6718dba1-fa58-4130-b9c0-ee9e8f1f2310" />
+<img width="1740" height="1272" alt="image" src="https://github.com/user-attachments/assets/b5e79ba1-383d-434d-a672-d9ec5a496a1e" />
+<img width="1751" height="1279" alt="image" src="https://github.com/user-attachments/assets/9e3ea325-418f-459f-8d2a-6e6aa809d8cc" />
+<img width="1750" height="1272" alt="image" src="https://github.com/user-attachments/assets/f5e7ad25-dfe7-472e-90e2-dff250caf930" />
+
+
