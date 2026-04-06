@@ -1,0 +1,90 @@
+services:
+  # 1. 数据库服务 (PostgreSQL 18)
+  db:
+    image: postgres:18-alpine
+    container_name: x86sphere-ops-db
+    restart: always
+    environment:
+      - POSTGRES_USER=gitlab_ai
+      - POSTGRES_PASSWORD=gitlabai@2025#
+      - POSTGRES_DB=sphere_ops
+      - TZ=Asia/Shanghai
+    volumes:
+      - ./data/postgres:/var/lib/postgresql/data
+      - ./init-sql:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U gitlab_ai -d sphere_ops && psql -U gitlab_ai -d sphere_ops -c 'SELECT 1'"]
+      interval: 3s
+      timeout: 5s
+      retries: 20
+      start_period: 5s
+    networks:
+      - x86sphere-net
+
+  # 2. 缓存服务 (Redis 8.2)
+  redis:
+    image: redis:8.2-alpine
+    container_name: x86sphere-ops-redis
+    restart: always
+    command: redis-server --requirepass gilabai@2025#
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "gilabai@2025#", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - x86sphere-net
+
+  # 3. 后端服务 (Golang)
+  backend:
+    image: x86sphere/x86sphere_ops:backend-v1.0.1
+    container_name: x86sphere-ops-backend
+    restart: always
+    command: >
+      sh -c "until nc -z x86sphere-ops-db 5432; do echo '等待数据库端口响应...'; sleep 1; done;
+             echo '数据库端口已开放，等待 3 秒确保初始化完成...';
+             sleep 3;
+             ./x86sphere-ops-backend"
+    environment:
+      - GIN_MODE=release
+    ports:
+      - "8083:8083"
+    volumes:
+      - ./x86sphere_ops_admin/config:/app/config
+      - ./x86sphere_ops_admin/uploads:/app/uploads
+      - ./x86sphere_ops_admin/logs:/app/logs
+      - ./x86sphere_ops_admin/pkg/utils/ip2region_v4.xdb:/app/pkg/utils/ip2region_v4.xdb
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget --quiet --tries=1 --spider http://localhost:8083/api/v1/healthz || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 45s
+    networks:
+      - x86sphere-net
+
+  # 4. 前端服务 (Vue 3 / Nginx)
+  frontend:
+    image: x86sphere/x86sphere_ops:frontend-v1.0.1
+    container_name: x86sphere-ops-frontend
+    restart: always
+    ports:
+      - "80:80"
+    depends_on:
+      backend:
+        condition: service_started
+    networks:
+      - x86sphere-net
+
+networks:
+  x86sphere-net:
+    driver: bridge
+
+volumes:
+  postgres_data:
+    driver: local
